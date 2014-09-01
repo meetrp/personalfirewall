@@ -7,6 +7,7 @@ myfirewall.sh
 =============
 Execute this shell script to set the firewall temporarily for this login session. <b>Don't forget to run as sudo</b> Also this script has been written to apply the same rules on all the available 'active' network interfaces. As you can see below, these set of rules have been applied on both 'eth0' as well as 'wlan0'. Also this scripts enables or disables a few kernel features through the '/proc' interface.
 
+```
 $> sudo ./myfirewall.sh
 [Monday 01 September 2014 21:38:06] Not a root!
 
@@ -53,6 +54,6 @@ $> sudo ./myfirewall.sh
 [Monday 01 September 2014 21:38:07] -------------- IPv6 ---------------
 [Monday 01 September 2014 21:38:07] clear all rules
 [Monday 01 September 2014 21:38:07] default drop
-
+```
 
 
