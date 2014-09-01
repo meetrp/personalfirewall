@@ -77,3 +77,20 @@ www.google.com : 74.125.0.0/16 74.125.0.0/16 74.125.0.0/16 74.125.0.0/16 74.125.
 ```
 
 In this example, these CIDRs can be used in the IPTables rules set to add specific rules to handle Facebook & Google traffic. Please run these at your server as these IPs are geo-specific, or so I think! ;)
+
+ipcalc
+======
+This 'perl' script is required by toCIDR.sh script to convert IP ranges to CIDR notation. This script has been borrowed from http://jodies.de/ipcalc. I thank Krischan Jodies for script such a beautiful masterpiece that works brilliantly. There are various usages to this but what I use is:
+
+```bash
+$> perl ipcalc -r 192.168.1.0 192.168.1.250
+deaggregate 192.168.1.0 - 192.168.1.250
+192.168.1.0/25
+192.168.1.128/26
+192.168.1.192/27
+192.168.1.224/28
+192.168.1.240/29
+192.168.1.248/31
+```
+
+These the CIDRs that is printed out by toCIDR.sh script.
