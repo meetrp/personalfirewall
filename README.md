@@ -7,7 +7,7 @@ myfirewall.sh
 =============
 Execute this shell script to set the firewall temporarily for this login session. <b>Don't forget to run as sudo</b> Also this script has been written to apply the same rules on all the available 'active' network interfaces. As you can see below, these set of rules have been applied on both 'eth0' as well as 'wlan0'. Also this scripts enables or disables a few kernel features through the '/proc' interface.
 
-```
+```bash
 $> sudo ./myfirewall.sh
 [Monday 01 September 2014 21:38:06] Not a root!
 
@@ -70,7 +70,7 @@ toCIDR.sh
 =========
 This script is used to convert given URL(s) to their CIDRs. For example:
 
-```
+```bash
 $> toCIDR.sh www.facebook.com www.google.com
 www.facebook.com : 31.13.91.0/24
 www.google.com : 74.125.0.0/16 74.125.0.0/16 74.125.0.0/16 74.125.0.0/16 74.125.0.0/16 74.125.0.0/16
