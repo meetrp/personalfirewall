@@ -6,6 +6,9 @@
 # A firewall script intended to be used on workstations/laptops. It basically
 # blocks most & opens only what is minimally required.
 #
+# Detailed description of this is available on my blog:
+#	http://tech.meetrp.com/blog/iptables-personal-firewall-to-protect-my-laptop/
+#
 # Note: Work in progress. Any suggestions are welcome. :)
 #
 # Courtesy:
@@ -35,8 +38,12 @@ ROOT_DIR="/root"
 # Set the file to zero
 ##
 log() {
-	now=`date "+%x %T"`
-	$ECHO "[$now] $1"
+	if [ $# -gt 0 ]; then
+		now=`date "+%x %T"`
+		$ECHO -e "[$now] $1"
+	else
+		$ECHO
+	fi
 }
 
 
@@ -73,7 +80,7 @@ enable() {
 ##
 enable_broadcast_echo_protection() {
 	if [ -e /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts ]; then
-		log "ignore ICMP echo broadcasts"
+		log "{IGNORE} \t\t ICMP echo broadcasts"
 		enable /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts
 	fi
 }
@@ -87,7 +94,7 @@ enable_broadcast_echo_protection() {
 ##
 disable_source_routed_packets() {
 	if [ -e /proc/sys/net/ipv4/conf/all/accept_source_route ]; then
-		log "disable source route"
+		log "{DISABLE} \t\t source route"
 		for iter in /proc/sys/net/ipv4/conf/*/accept_source_route
 		do
 			disable $iter
@@ -107,7 +114,7 @@ disable_source_routed_packets() {
 ##
 disable_icmp_redirects() {
 	if [ -e /proc/sys/net/ipv4/conf/all/accept_redirects ]; then
-		log "disable ICMP redirects"
+		log "{DISABLE} \t\t ICMP redirects"
 		for iter in /proc/sys/net/ipv4/conf/*/accept_redirects
 		do
 			disable $iter
@@ -125,7 +132,7 @@ disable_icmp_redirects() {
 ##
 disable_ip_forwarding() {
 	if [ -e /proc/sys/net/ipv4/ip_forward ]; then
-		log "disable ip forwarding"
+		log "{DISABLE} \t\t IP forwarding"
 		disable /proc/sys/net/ipv4/ip_forward
 	fi
 }
@@ -143,7 +150,7 @@ disable_ip_forwarding() {
 ##
 enable_source_address_verification() {
 	if [ -e /proc/sys/net/ipv4/conf/all/rp_filter ]; then
-		log "enable reverse path filtering"
+		log "{ENABLE} \t\t reverse path filtering"
 		for iter in /proc/sys/net/ipv4/conf/*/rp_filter
 		do
 			enable $iter
@@ -162,7 +169,7 @@ enable_source_address_verification() {
 ##
 enable_tcp_syn_cookies() {
 	if [ -e /proc/sys/net/ipv4/tcp_syncookies ]; then
-		log "enable syn cookies protetion"
+		log "{ENABLE} \t\t SYN cookies protetion"
 		enable /proc/sys/net/ipv4/tcp_syncookies
 	fi
 }
@@ -179,7 +186,7 @@ enable_tcp_syn_cookies() {
 ##
 drop_IANA_reserved_ips() {
 	iptables_bin=$1
-	log "drop all IANA reserved IPs"
+	log "{DROP} INCOMING: \t\t\t all IANA reserved IPs"
 
 	$SUDO ${iptables_bin} -A INPUT -s 0.0.0.0/7 -j DROP
 	$SUDO ${iptables_bin} -A INPUT -s 2.0.0.0/8 -j DROP
@@ -233,7 +240,7 @@ drop_IANA_reserved_ips() {
 ##
 enable_log_martians() {
 	if [ -e /proc/sys/net/ipv4/conf/all/log_martians ]; then
-		log "log all packets"
+		log "{ENABLE} \t\t log for all unroutable packets"
 		for iter in /proc/sys/net/ipv4/conf/*/log_martians
 		do
 			enable $iter
@@ -298,7 +305,7 @@ default_drop_all() {
 # Log all the dropped incoming packets to the syslogd for debugging
 ##
 log_all_dropped_incoming() {
-	log "log all dropped incoming"
+	log "\t {LOG}   INCOMING: \t\t all dropped"
 
 	iface=$1
 	iptables_bin=$2
@@ -315,7 +322,7 @@ log_all_dropped_incoming() {
 # Log all the dropped outgoing packets to the syslogd for debugging
 ##
 log_all_dropped_outgoing() {
-	log "log all dropped incoming"
+	log "\t {LOG}   OUTGOING: \t\t all dropped"
 
 	iface=$1
 	iptables_bin=$2
@@ -332,7 +339,7 @@ log_all_dropped_outgoing() {
 # Allow any RELATED or ESTABLISHED connections
 ##
 allow_related_established() {
-	log "allow all related & established" 
+	log "{ALLOW} INCOMING & OUTGOING: \t related & established packets" 
 
 	iptables_bin=$1
 
@@ -352,7 +359,7 @@ allow_related_established() {
 # Allow all traffic from loopback interface
 ##
 allow_loopback() {
-	log "allow loop back"
+	log "{ALLOW} INCOMING & OUTGOING: \t loopback interface"
 
 	iptables_bin=$1
 
@@ -372,7 +379,7 @@ allow_loopback() {
 # Allow outbound DHCP packets 
 ##
 allow_DHCP_out() {
-	log "allow DHCP out"
+	log "\t {ALLOW} OUTGOING: \t\t DHCP"
 
 	iface=$1
 	iptables_bin=$2
@@ -385,7 +392,7 @@ allow_DHCP_out() {
 # Allow inbound SSH packets 
 ##
 allow_SSH_in() {
-	log "allow SSH in"
+	log "\t {ALLOW} INCOMING: \t\t SSH"
 
 	iface=$1
 	iptables_bin=$2
@@ -403,7 +410,7 @@ allow_SSH_in() {
 # Allow outbound SSH packets 
 ##
 allow_SSH_out() {
-	log "allow SSH out"
+	log "\t {ALLOW} OUTGOING: \t\t SSH"
 
 	iface=$1
 	iptables_bin=$2
@@ -421,7 +428,7 @@ allow_SSH_out() {
 # Allow outbound WHOIS packets 
 ##
 allow_WHOIS_out() {
-	log "allow WHOIS out"
+	log "\t {ALLOW} OUTGOING: \t\t WHOIS"
 
 	iface=$1
 	iptables_bin=$2
@@ -439,7 +446,7 @@ allow_WHOIS_out() {
 # Allow outbound SMTP packets 
 ##
 allow_SMTP_out() {
-	log "allow SMTP out"
+	log "\t {ALLOW} OUTGOING: \t\t SMTP"
 
 	iface=$1
 	iptables_bin=$2
@@ -452,7 +459,7 @@ allow_SMTP_out() {
 # Allow outbound DNS packets 
 ##
 allow_DNS_out() {
-	log "allow DNS out"
+	log "\t {ALLOW} OUTGOING: \t\t DNS"
 
 	iface=$1
 	iptables_bin=$2
@@ -470,7 +477,7 @@ allow_DNS_out() {
 # Allow inbound ping(ICMP) packets 
 ##
 allow_ping_in() {
-	log "allow ping in"
+	log "{ALLOW} INCOMING: \t\t ping"
 
 	iface=$1
 	iptables_bin=$2
@@ -488,7 +495,7 @@ allow_ping_in() {
 # Allow outbound ping(ICMP) packets
 ##
 allow_ping_out() {
-	log "allow ping out"
+	log "\t {ALLOW} OUTGOING: \t\t ping"
 
 	iface=$1
 	iptables_bin=$2
@@ -506,7 +513,7 @@ allow_ping_out() {
 # Allow outbound NTP packets 
 ##
 allow_NTP_out() {
-	log "allow NTP out"
+	log "\t {ALLOW} OUTGOING: \t\t NTP"
 
 	iface=$1
 	iptables_bin=$2
@@ -519,7 +526,7 @@ allow_NTP_out() {
 # Allow outbound HTTP & HTTPS packets 
 ##
 allow_HTTP_out() {
-	log "allow HTTP out"
+	log "\t {ALLOW} OUTGOING: \t\t HTTP"
 
 	iface=$1
 	iptables_bin=$2
@@ -540,7 +547,7 @@ allow_HTTP_out() {
 # Allow inbound skype packets 
 ##
 allow_skype_in() {
-	log "allow skype in"
+	log "\t {ALLOW} INCOMING: \t\t skype"
 
 	iface=$1
 	iptables_bin=$2
@@ -559,7 +566,7 @@ firewall_all_ifaces() {
 	INET_FACES=`$IFCONFIG -s | $GREP -vi 'kernel' | $GREP -vi 'iface' | $GREP -v 'lo' | $AWK '{print $1}'`
 	for iface in $INET_FACES
 	do
-		log "--> ${iface}"
+		log "============== ${iface} =============="
 
 		# allow incoming requests
 		#allow_SSH_in ${iface}
@@ -600,10 +607,13 @@ main() {
 		log "Not a root!"
 	fi
 
+	log
+	log "-------------- KERNEL FEATURES ---------------"
 	disable_enable_kernel_features
 
 	# Handle IPv4 based firewall
 	if [ ! -z $IPv4TABLES ]; then
+		log
 		log "-------------- IPv4 ---------------"
 		clear_all_rules $IPv4TABLES
 		default_drop_all $IPv4TABLES
@@ -615,6 +625,7 @@ main() {
 
 	# Handle IPv6 based firewall
 	if [ ! -z $IPv6TABLES ]; then
+		log
 		log "-------------- IPv6 ---------------"
 		clear_all_rules $IPv6TABLES
 		default_drop_all $IPv6TABLES
