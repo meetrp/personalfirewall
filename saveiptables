@@ -1,0 +1,16 @@
+#!/bin/bash
+
+###############################################################################
+# Save the current IPTables rules 
+#
+# This is placed under /etc/network/ifdown.d/ so that everytime the system
+# reboots the IPTables rules are saved to be reset during the boot
+###############################################################################
+
+# Save the IP v4 rule set
+/sbin/iptables-save > /etc/ipv4tables.rules
+
+# Save the IP v6 rule set
+/sbin/ip6tables-save > /etc/ipv6tables.rules
+
+exit 0

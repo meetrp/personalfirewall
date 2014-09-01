@@ -1,0 +1,20 @@
+#!/bin/bash
+
+###############################################################################
+# Restores the IPTables rules from the previously saved state
+#
+# This is placed under /etc/network/ifup.d/ so that everytime the system
+# reboots the IPTables rules are established
+###############################################################################
+
+# Restore the IP v4 rule set
+if [ -e /etc/ipv4tables.rules]; then
+	/sbin/iptables-restore < /etc/ipv4tables.rules
+fi
+
+# Restore the IP v6 rule set
+if [ -e /etc/ipv6tables.rules]; then
+	/sbin/ip6tables-restore < /etc/ipv6tables.rules
+fi
+
+exit 0
