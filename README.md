@@ -56,4 +56,24 @@ $> sudo ./myfirewall.sh
 [Monday 01 September 2014 21:38:07] default drop
 ```
 
+loadiptables & saveiptables
+===========================
+These are required if you want to persist the IPTables rules. The saving & restoring happens during network-down & network-up, respectively. To do so:
 
+```bash
+$> sudo cp loadiptables /etc/network/if-up.d/
+
+$> sudo cp saveiptables /etc/network/if-down.d/
+```
+
+toCIDR.sh
+=========
+This script is used to convert given URL(s) to their CIDRs. For example:
+
+```
+$> toCIDR.sh www.facebook.com www.google.com
+www.facebook.com : 31.13.91.0/24
+www.google.com : 74.125.0.0/16 74.125.0.0/16 74.125.0.0/16 74.125.0.0/16 74.125.0.0/16 74.125.0.0/16
+```
+
+In this example, these CIDRs can be used in the IPTables rules set to add specific rules to handle Facebook & Google traffic. Please run these at your server as these IPs are geo-specific, or so I think! ;)
