@@ -80,7 +80,7 @@ In this example, these CIDRs can be used in the IPTables rules set to add specif
 
 ipcalc
 ======
-This 'perl' script is required by toCIDR.sh script to convert IP ranges to CIDR notation. This script has been borrowed from http://jodies.de/ipcalc. I thank Krischan Jodies for script such a beautiful masterpiece that works brilliantly. There are various usages to this but what I use is:
+This 'perl' script is required by toCIDR.sh script to convert IP ranges to CIDR notation. This script has been borrowed from http://jodies.de/ipcalc. I thank Krischan Jodies<ipcalc-200808@jodies.de> for scripting such a beautiful masterpiece that works brilliantly. There are various usages to this but what I use is:
 
 ```bash
 $> perl ipcalc -r 192.168.1.0 192.168.1.250
