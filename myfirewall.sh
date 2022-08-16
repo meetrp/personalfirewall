@@ -24,7 +24,7 @@
 AWK=`which awk`
 ECHO=`which echo`
 GREP=`which grep`
-IFCONFIG=`which ifconfig`
+IP=`which ip`
 IPv4TABLES=`which iptables`
 IPv6TABLES=`which ip6tables`
 LS=`which ls`
@@ -563,7 +563,7 @@ allow_skype_in() {
 firewall_all_ifaces() {
 	iptables_bin=$1
 
-	INET_FACES=`$IFCONFIG -s | $GREP -vi 'kernel' | $GREP -vi 'iface' | $GREP -v 'lo' | $AWK '{print $1}'`
+	INET_FACES=`$IP addr | $GREP -v 'lo' | $GREP -vi 'link' | $GREP -vi 'inet' | $GREP -vi 'valid' | $GREP -vi 'inet6' |  cut -d ':' -f 2  | $AWK '{print $1}'`
 	for iface in $INET_FACES
 	do
 		log "============== ${iface} =============="
